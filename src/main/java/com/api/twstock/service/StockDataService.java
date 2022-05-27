@@ -8,6 +8,8 @@ import com.api.twstock.utils.FetchAPIUtil;
 import com.api.twstock.utils.TACalculationUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,8 @@ import java.util.stream.Collectors;
 @Service
 public class StockDataService {
 
+    private static final Logger logger = LoggerFactory.getLogger(StockDataService.class);
+
     public List<StockHistoryData> getBasicTaData(BasicTaDto basicTaDto){
         ObjectMapper mapper = new ObjectMapper();
         List<StockHistoryData> basicData= FetchAPIUtil.fetchFinmindAPI(
@@ -27,6 +31,7 @@ public class StockDataService {
                 HttpMethod.GET,
                 FinmindQuoteData.class).getData();
         List<StockHistoryData> list = mapper.convertValue(basicData, new TypeReference<List<StockHistoryData>>(){});
+        logger.info("data fetch success");
         return list;
     }
 

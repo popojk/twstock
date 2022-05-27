@@ -2,6 +2,8 @@ package com.api.twstock.controller;
 
 import com.api.twstock.model.DTO.BasicTaDto;
 import com.api.twstock.service.StockDataService;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,8 +15,13 @@ public class TaStatsController {
     @Autowired
     StockDataService stockDataService;
 
+    @ApiOperation(value="依股票代號與起始日取得個股歷史股價")
     @GetMapping("/basic")
-    public Object getBasicTa(@RequestBody BasicTaDto basicTaDto){
+    public Object getBasicTa(@RequestParam(name="stock_id") String stockId,
+                             @RequestParam(name="start_date") String startDate){
+        BasicTaDto basicTaDto = new BasicTaDto();
+        basicTaDto.setStockNo(stockId);
+        basicTaDto.setStartDate(startDate);
         return stockDataService.getBasicTaData(basicTaDto);
     }
 
@@ -22,4 +29,6 @@ public class TaStatsController {
     public Object getBasicTaWithMA(@RequestBody BasicTaDto basicTaDto){
         return  stockDataService.getBasicTaDataWithMA(basicTaDto);
     }
+
+
 }
