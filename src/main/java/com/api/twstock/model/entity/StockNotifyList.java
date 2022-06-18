@@ -28,12 +28,16 @@ public class StockNotifyList {
     @Column(name="comment")
     private String comment;
 
+    @Column(name="user_line_id")
+    private String userLineId;
+
     public StockNotifyList(){};
 
-    public StockNotifyList(String stockId, Float targetPrice, String strat, String comment) {
+    public StockNotifyList(String stockId, Float targetPrice, String strat, String comment, String userLineId) {
         this.stockId = stockId;
         this.targetPrice = targetPrice;
         this.strat = strat;
         this.comment = comment;
+        this.userLineId = userLineId;
     }
 }

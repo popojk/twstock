@@ -25,6 +25,7 @@ public class TaStatsController {
         return stockDataService.getBasicTaData(basicTaDto);
     }
 
+    @ApiOperation(value="依股票代號，起始日以及均線天數取得個股歷史股價及移動平均線資料")
     @GetMapping("basicwithma")
     public Object getBasicTaWithMA(@RequestBody BasicTaDto basicTaDto){
         return  stockDataService.getBasicTaDataWithMA(basicTaDto);

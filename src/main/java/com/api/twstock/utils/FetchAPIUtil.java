@@ -68,7 +68,6 @@ public class FetchAPIUtil {
         map.add("token", token);
 
         HttpEntity<String> httpEntity = new HttpEntity<String>(headers);
-
         UriComponentsBuilder builder = UriComponentsBuilder.fromUriString("https://api.finmindtrade.com/api/v4/data")
                 .queryParams(map);
         UriComponents uriComponents = builder.build().encode();

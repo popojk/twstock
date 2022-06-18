@@ -2,6 +2,7 @@ package com.api.twstock.service;
 
 import com.api.twstock.model.DTO.BasicTaDto;
 import com.api.twstock.model.jsonFormat.FinmindQuoteData;
+import com.api.twstock.model.jsonFormat.QuoteData;
 import com.api.twstock.model.jsonFormat.StockHistoryData;
 import com.api.twstock.model.util.MAData;
 import com.api.twstock.utils.FetchAPIUtil;
@@ -14,6 +15,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.MalformedParameterizedTypeException;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -21,6 +23,21 @@ import java.util.stream.Collectors;
 public class StockDataService {
 
     private static final Logger logger = LoggerFactory.getLogger(StockDataService.class);
+
+    public QuoteData getLatestQuotationDataByTicker(String ticker){
+        ObjectMapper mapper = new ObjectMapper();
+        LocalDate today = LocalDate.now();
+        List<QuoteData> data =
+            FetchAPIUtil.fetchFinmindAPI("TaiwanStockPriceTick",
+                            ticker, "2022-06-13", HttpMethod.GET, FinmindQuoteData.class)
+                    .getData();
+        List<QuoteData> list = mapper.convertValue(data, new TypeReference<List<QuoteData>>(){});
+
+        //get the latest quotation
+        QuoteData lastQuote = list.get(list.size() - 1);
+
+        return lastQuote;
+    }
 
     public List<StockHistoryData> getBasicTaData(BasicTaDto basicTaDto){
         ObjectMapper mapper = new ObjectMapper();
@@ -39,39 +56,12 @@ public class StockDataService {
         List<StockHistoryData> basicData = getBasicTaData(basicTaDto);
 
         Map<Object, Object> finalResultMap = new HashMap<>();
-        Map<Integer, List<Map<String, Double>>> MASet = new HashMap<>();
-
-        for(Integer movingAverage : basicTaDto.getMovingAverageList()) {
-            List<Map<String, Double>> resultList = new ArrayList<>();
-
-            //Loop over MA list and get MA data
-            for (int i = basicData.size()-1; i > movingAverage ; i--) {
-                Map<String, Double> MADataSet = new HashMap<>();
-                Double MA;
-                List<Double> currentDaysPrice = new ArrayList<>();
-                Integer days = 0;
-
-                String date = basicData.get(i).getDate();
-
-                while (days < movingAverage) {
-                    currentDaysPrice.add(basicData.get(i-days).getClose());
-                    days++;
-                }
-                MA = currentDaysPrice.stream().mapToDouble(d -> d)
-                        .average().getAsDouble();
-
-                MADataSet.put(date, MA);
-                resultList.add(MADataSet);
-            }
-            MASet.put(movingAverage, resultList);
-        }
-
-        Object KDDataSet = TACalculationUtil.calculateKDIndex(basicData);
+        Map<Integer, List<Map<String, Double>>> MASet = TACalculationUtil.getMASet(basicData, basicTaDto);
 
         finalResultMap.put(1, basicData);
         finalResultMap.put(2, MASet);
-        finalResultMap.put(3, KDDataSet);
         return finalResultMap;
-
     }
+
+
 }

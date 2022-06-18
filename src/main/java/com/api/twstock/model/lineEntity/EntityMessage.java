@@ -1,2 +1,5 @@
-package com.api.twstock.model.lineEntity;public class EntityMessage {
+package com.api.twstock.model.lineEntity;
+
+public class EntityMessage {
+
 }
