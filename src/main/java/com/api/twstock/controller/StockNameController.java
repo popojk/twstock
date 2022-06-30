@@ -23,7 +23,12 @@ public class StockNameController {
 
     @GetMapping("/getname")
     public Object getStockNameById(@RequestParam(name="stockid") String stockId){
-        return stockNameService.getStockNameById(stockId);
+        return stockNameService.getStockNameOrId(stockId);
+    }
+
+    @GetMapping("/getId")
+    public Object getStockIdByName(@RequestParam(name="stockname") String stockName){
+        return stockNameService.getStockNameOrId(stockName);
     }
 
 

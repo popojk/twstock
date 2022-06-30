@@ -50,6 +50,15 @@ public class TextResolver implements Resolver {
             case "notify":
                 replyService.recordNoticeInfoAndSendMessage(replyToken, userId, message);
                 break;
+            case "add":
+                replyService.addStockToWatchlist(replyToken, userId, message);
+                break;
+            case "delete":
+                replyService.deleteStockFromWatchlist(replyToken, userId, message);
+                break;
+            case "watchlist":
+                replyService.showWatchlist(replyToken, userId);
+                break;
             default:
                 replyService.sendResponseMessage(replyToken, lineMessageUtil.defaultMessageUtil());
                 break;

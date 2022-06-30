@@ -15,9 +15,18 @@ public class TaStatsController {
     @Autowired
     StockDataService stockDataService;
 
+    @ApiOperation(value="取得finmind API資料")
+    @GetMapping
+    public Object getFinmindAPIData(@RequestParam(name="dataset") String dataset,
+                                    @RequestParam(name="stock_id") String stockId,
+                                    @RequestParam(name="start_date") String start_date,
+                                    @RequestParam(name="end_date") String end_date){
+           return stockDataService.getFinmindAPIData(dataset, stockId, start_date);
+    }
+
     @ApiOperation(value="依股票代號與起始日取得個股歷史股價")
     @GetMapping("/basic")
-    public Object getBasicTa(@RequestParam(name="stock_id") String stockId,
+    public Object getData(@RequestParam(name="stock_id") String stockId,
                              @RequestParam(name="start_date") String startDate){
         BasicTaDto basicTaDto = new BasicTaDto();
         basicTaDto.setStockNo(stockId);

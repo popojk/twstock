@@ -39,6 +39,12 @@ public class StockDataService {
         return lastQuote;
     }
 
+    //fetch finmind API data
+    public Object getFinmindAPIData(String dataset, String stockId, String startDate){
+        return FetchAPIUtil.fetchFinmindAPI(dataset,
+               stockId, startDate, HttpMethod.GET, FinmindQuoteData.class);
+    }
+
     public List<StockHistoryData> getBasicTaData(BasicTaDto basicTaDto){
         ObjectMapper mapper = new ObjectMapper();
         List<StockHistoryData> basicData= FetchAPIUtil.fetchFinmindAPI(

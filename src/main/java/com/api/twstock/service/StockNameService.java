@@ -34,12 +34,13 @@ public class StockNameService {
             , data.get(i).getMarketType());
             //stockNameRepo.save(stockName);
             redisService.set(stockName.getStockId(), stockName.getStockName());
+            redisService.set(stockName.getStockName(), stockName.getStockId());
         }
         return data;
     }
 
-    public Object getStockNameById(String stockId){
-        return redisService.get(stockId);
+    public Object getStockNameOrId(String stockNameOrId){
+        return redisService.get(stockNameOrId);
     }
 
 

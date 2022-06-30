@@ -55,7 +55,7 @@ public class StockNotifyService {
     }
 
     //send notice when stock price hit target price
-    @Scheduled(fixedRate = 5000)
+    //@Scheduled(fixedRate = 5000)
     public void hitPriceNotice() {
         ObjectMapper mapper = new ObjectMapper();
         //get stock notify list from db

@@ -1,5 +1,6 @@
 package com.api.twstock.model.security;
 
+import com.api.twstock.model.entity.StockWatchlist;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 
@@ -28,6 +29,12 @@ public class User {
 
     @Column(name="last_password_reset_date")
     private Timestamp lastPasswordResetDate;
+
+    @Column(name="user_line_id")
+    private String userLineId;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<StockWatchlist> watchList = new ArrayList<>();
 
     @JsonBackReference
     @ManyToMany(fetch = FetchType.EAGER)

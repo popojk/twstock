@@ -62,4 +62,5 @@ public class JwtUserDetailsServiceImpl implements UserDetailsService {
         userRepo.save(tempUser);
         return tempUser;
     }
+
 }
