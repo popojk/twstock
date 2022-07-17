@@ -44,6 +44,9 @@ public class TextResolver implements Resolver {
         }
 
         switch(message.split(" ")[0]){
+            case "account":
+                replyService.addLineIdToAccount(replyToken, userId, message);
+                break;
             case "quotation":
                 replyService.sendResponseMessage(replyToken, lineMessageUtil.quotationMessageUtil(message));
                 break;

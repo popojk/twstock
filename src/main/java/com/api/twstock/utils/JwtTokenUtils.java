@@ -1,5 +1,6 @@
 package com.api.twstock.utils;
 
+import com.api.twstock.exception.ApiException;
 import com.api.twstock.model.security.AuthRequest;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;
@@ -15,7 +16,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.security.Key;
+import java.time.Instant;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class JwtTokenUtils {
 
@@ -27,28 +32,50 @@ public class JwtTokenUtils {
     @Value("${jwt.secret}")
     String secret;
 
-    public String generateToken(AuthRequest request){
+    public Map<String, String> generateToken(AuthRequest request){
         Authentication authentication =
                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword());
         authentication = authenticationManager.authenticate(authentication);
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
+        //generate access token
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.HOUR, 10);
-
+        calendar.add(Calendar.MINUTE, 30);
         Claims claims = Jwts.claims();
         claims.put("sub", userDetails.getUsername());
         claims.setExpiration(calendar.getTime());
         claims.setIssuer("TW stock");
-
         Key secretKey = Keys.hmacShaKeyFor(secret.getBytes());
+        String accessToken = Jwts.builder().setClaims(claims).signWith(secretKey).compact();
 
+        //generate refresh token
+        calendar.add(Calendar.HOUR, 72);
+        Claims refreshTokenClaims = Jwts.claims();
+        refreshTokenClaims.put("sub", userDetails.getUsername());
+        refreshTokenClaims.setExpiration(calendar.getTime());
+        refreshTokenClaims.setIssuer("TW stock");
+        String refreshToken = Jwts.builder().setClaims(refreshTokenClaims).signWith(secretKey).compact();
+
+        Map<String, String> tokens = new HashMap<>();
+        tokens.put("access_token", accessToken);
+        tokens.put("refresh_token", refreshToken);
+        return tokens;
+    }
+
+    //使用username產生access token
+    public String generateAccessTokenByUsername(String username){
+        //generate access token
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MINUTE, 30);
+        Claims claims = Jwts.claims();
+        claims.put("sub", username);
+        claims.setExpiration(calendar.getTime());
+        claims.setIssuer("TW stock");
+        Key secretKey = Keys.hmacShaKeyFor(secret.getBytes());
         return Jwts.builder().setClaims(claims).signWith(secretKey).compact();
     }
 
-    /**
-     * 从token中获取JWT中的负载
-     */
+    //取得JWT中的值
     private Claims getClaimsFromToken(String token) {
         Key secretKey = Keys.hmacShaKeyFor(secret.getBytes());
         Claims claims = null;
@@ -64,9 +91,7 @@ public class JwtTokenUtils {
         return claims;
     }
 
-    /**
-     * 从token中获取登录用户名
-     */
+    //從JWT中獲得用戶名
     public String getUserNameFromToken(String token) {
         String username;
         try {
@@ -76,6 +101,16 @@ public class JwtTokenUtils {
             username = null;
         }
         return username;
+    }
+
+    //確認token效期
+    public String verifyExpriation(String refreshToken) throws ApiException {
+         Claims claims = getClaimsFromToken(refreshToken);
+         Date expriation = claims.getExpiration();
+         if(expriation.before(new Date(System.currentTimeMillis()))){
+             throw new ApiException("Refresh token was expired");
+         }
+         return refreshToken;
     }
 
 }

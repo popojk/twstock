@@ -28,19 +28,22 @@ public class ReplyService {
     private StockNameService stockNameService;
     private UserService userService;
     private LineMessageUtil lineMessageUtil;
+    private JwtUserDetailsServiceImpl jwtUserDetailsService;
 
     public ReplyService(LineMessageAPI lineMessageAPI,
                         StockNotifyService stockNotifyService,
                         WatchlistService watchlistService,
                         StockNameService stockNameService,
                         UserService userService,
-                        LineMessageUtil lineMessageUtil){
+                        LineMessageUtil lineMessageUtil,
+                        JwtUserDetailsServiceImpl jwtUserDetailsService){
         this.lineMessageAPI = lineMessageAPI;
         this.stockNotifyService = stockNotifyService;
         this.watchlistService = watchlistService;
         this.stockNameService = stockNameService;
         this.userService = userService;
         this.lineMessageUtil = lineMessageUtil;
+        this.jwtUserDetailsService = jwtUserDetailsService;
     }
 
     public void replyTest(){
@@ -67,6 +70,15 @@ public class ReplyService {
 
         Reply reply = new Reply(replyToken, messagesList);
         reply(reply);
+    }
+
+    public void addLineIdToAccount(String replyToken, String userLineId, String message){
+        String username = message.split(" ")[1];
+        if(jwtUserDetailsService.addUserLineIdToAccount(username, userLineId)){
+            sendResponseMessage(replyToken, "恭喜你，line id加入成功，可以開始使用提醒功能");
+        }else {
+            sendResponseMessage(replyToken, "找不到用戶名稱");
+        };
     }
 
     public void addStockToWatchlist(String replyToken, String userId, String message) throws ApiException {

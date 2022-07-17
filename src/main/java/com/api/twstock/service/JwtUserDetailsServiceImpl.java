@@ -6,6 +6,7 @@ import com.api.twstock.model.DTO.CreateUserDto;
 import com.api.twstock.model.security.User;
 import com.api.twstock.repo.RoleRepo;
 import com.api.twstock.repo.UserRepo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -19,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Service
+@Slf4j
 public class JwtUserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
@@ -41,6 +43,18 @@ public class JwtUserDetailsServiceImpl implements UserDetailsService {
         }
     }
 
+    //get user data for login
+    public User getUserData(String username, String password){
+        User user = userRepo.findByUsername(username);
+        if(user==null){
+            throw new UsernameNotFoundException(String.format("No user found with username ''%s", username));
+        }
+        if(!passwordEncoder.matches(password, user.getPassword())){
+            throw new ApiException("Wrong password");
+        }
+        return user;
+    }
+
     public User createUser(CreateUserDto createUserDto) {
         if(userRepo.findByUsername(createUserDto.getUsername()) != null){
             throw new ApiException("Username "+ createUserDto.getUsername() + " already exists!");
@@ -61,6 +75,18 @@ public class JwtUserDetailsServiceImpl implements UserDetailsService {
 
         userRepo.save(tempUser);
         return tempUser;
+    }
+
+    public Boolean addUserLineIdToAccount(String username, String userLineId) throws UsernameNotFoundException{
+            //find user from user repo
+            User tempUser = userRepo.findByUsername(username);
+            if(tempUser == null){
+                throw new UsernameNotFoundException("username do not exist");
+            }
+            //add user line id to account
+            tempUser.setUserLineId(userLineId);
+            userRepo.save(tempUser);
+            return true;
     }
 
 }
