@@ -13,4 +13,6 @@ public class TradeNotifyDTO {
     private String tradingStrat;
 
     private String message;
+
+    private String userLineId;
 }

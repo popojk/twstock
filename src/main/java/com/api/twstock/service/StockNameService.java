@@ -18,11 +18,13 @@ import java.util.List;
 @Service
 public class StockNameService {
 
-    @Autowired
     StockNameRepo stockNameRepo;
-
-    @Autowired
     RedisService redisService;
+
+    public StockNameService(StockNameRepo stockNameRepo, RedisService redisService) {
+        this.stockNameRepo = stockNameRepo;
+        this.redisService = redisService;
+    }
 
     public List<StockNameData> createStockNameList(){
         List<StockNameData> data = FetchAPIUtil.fetchFinmindAPI("TaiwanStockInfo",

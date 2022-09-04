@@ -8,6 +8,7 @@ import com.api.twstock.repo.RoleRepo;
 import com.api.twstock.repo.UserRepo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -46,33 +47,17 @@ public class JwtUserDetailsServiceImpl implements UserDetailsService {
     //get user data for login
     public User getUserData(String username, String password){
         User user = userRepo.findByUsername(username);
-        if(user==null){
-            throw new UsernameNotFoundException(String.format("No user found with username ''%s", username));
-        }
-        if(!passwordEncoder.matches(password, user.getPassword())){
-            throw new ApiException("Wrong password");
-        }
         return user;
     }
 
+    //create user
     public User createUser(CreateUserDto createUserDto) {
-        if(userRepo.findByUsername(createUserDto.getUsername()) != null){
-            throw new ApiException("Username "+ createUserDto.getUsername() + " already exists!");
-        }
-
-        if(userRepo.findByEmail(createUserDto.getEmail()) != null){
-            throw new ApiException("Email "+ createUserDto.getEmail() + " already exists!");
-        }
-
         User tempUser = new User(createUserDto.getUsername(),
-                passwordEncoder.encode(createUserDto.getPassword()),
-                createUserDto.getEmail());
+        passwordEncoder.encode(createUserDto.getPassword()), createUserDto.getEmail());
         tempUser.getRoles().add(roleRepo.getById(2));
-
         Date currentTime = new Date();
         Timestamp timestamp = new Timestamp(currentTime.getTime());
         tempUser.setLastPasswordResetDate(timestamp);
-
         userRepo.save(tempUser);
         return tempUser;
     }

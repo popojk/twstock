@@ -15,7 +15,6 @@ public class BackTestingService {
     @Autowired
     StockDataService stockDataService;
 
-
     public Object twentyMaOverSixtyMa(String stockId, long investmentAmount, String startDate, String endDate){
         BasicTaDto basicTaDto = new BasicTaDto();
         basicTaDto.setStockNo(stockId);

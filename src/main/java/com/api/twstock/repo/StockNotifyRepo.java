@@ -32,7 +32,7 @@ public interface StockNotifyRepo extends JpaRepository<StockNotifyList, Integer>
                                               @Param("strat") String strat,
                                               @Param("comment") String comment
                                               );
-
+    List<StockNotifyList> findByUserLineId(String userLineId);
 
 
 

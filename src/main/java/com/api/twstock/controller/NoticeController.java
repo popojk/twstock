@@ -11,6 +11,7 @@ import com.api.twstock.model.lineEntity.EventWrapper;
 import com.api.twstock.service.LineNotifyService;
 import com.api.twstock.service.ReplyService;
 import com.api.twstock.service.StockNotifyService;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -57,6 +58,7 @@ public class NoticeController {
 
     @PostMapping(produces = {"application/json"}, consumes = {"application/json"})
     @ResponseBody
+    @ApiOperation(value="取得line訊息")
     public ResponseEntity<Object> receiveMessage(@RequestBody EventWrapper eventWrapper){
         // filter : 篩出所有是 *訊息* |而且| 是 *文字* 的訊息
         // collect : 將其加入Map中 為 <replyToken, Event>
@@ -75,17 +77,25 @@ public class NoticeController {
         return ResponseEntity.ok().body("123");
     }
 
-    @GetMapping("/getall")
-    public List<StockNotifyList> getAllNotifyList(){
-        return stockNotifyService.getAllNotifyList();
+    @PostMapping("/frontend")
+    @ResponseBody
+    @ApiOperation(value="從前端網站新增到價通知")
+    public ResponseEntity<Object> addNotifyListFromFrontend(@RequestBody TradeNotifyDTO tradeNotifyDTO){
+        if(stockNotifyService.addStockNotifyList(tradeNotifyDTO.getStockId(), tradeNotifyDTO.getTargetPrice(),
+                tradeNotifyDTO.getTradingStrat(), tradeNotifyDTO.getMessage(), tradeNotifyDTO.getUserLineId()) != null
+        ){
+            return ResponseEntity.ok().build();
+        } return ResponseEntity.status(401).body("新增失敗");
     }
 
-    @PostMapping("/line")
-    public String getLineNotice(){
-        return lineNotifyService.sendNoticeToAlex("美股go to hell");
+    @GetMapping("/getnotifylistbylineid")
+    @ApiOperation(value="用line id取得到價通知清單")
+    public List<StockNotifyList> getNotifyListByLineId(@RequestParam String userlineid){
+        return stockNotifyService.getNotifyListByLineId(userlineid);
     }
 
     @PostMapping("/hitprice")
+    @ApiOperation(value="新增到價通知")
     public StockNotifyList addNotifyList(@RequestBody TradeNotifyDTO tradeNotifyDTO){
         StockNotifyList stockNotifyList = stockNotifyService.addStockNotifyList(tradeNotifyDTO.getStockId(),
                 tradeNotifyDTO.getTargetPrice(),
@@ -95,6 +105,7 @@ public class NoticeController {
     }
 
     @PutMapping("update")
+    @ApiOperation(value="更新到價通知")
     public int updateNotifyListItem(@RequestBody UpdateStockNotifyDto updateStockNotifyDto){
       return stockNotifyService.updateStockNotifyList(updateStockNotifyDto.getId(),
                updateStockNotifyDto.getTargetPrice(), updateStockNotifyDto.getStrat(),
@@ -102,6 +113,7 @@ public class NoticeController {
     }
 
     @DeleteMapping("/delete")
+    @ApiOperation(value="刪除到價通知")
     public void deleteStockNotifyListItem(@RequestParam Integer id){
         stockNotifyService.deleteStockNotifyList(id);
     }

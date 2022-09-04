@@ -40,7 +40,7 @@ public class JwtTokenUtils {
 
         //generate access token
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.MINUTE, 30);
+        calendar.add(Calendar.MONTH, 6);
         Claims claims = Jwts.claims();
         claims.put("sub", userDetails.getUsername());
         claims.setExpiration(calendar.getTime());
@@ -49,7 +49,7 @@ public class JwtTokenUtils {
         String accessToken = Jwts.builder().setClaims(claims).signWith(secretKey).compact();
 
         //generate refresh token
-        calendar.add(Calendar.HOUR, 72);
+        calendar.add(Calendar.MONTH, 12);
         Claims refreshTokenClaims = Jwts.claims();
         refreshTokenClaims.put("sub", userDetails.getUsername());
         refreshTokenClaims.setExpiration(calendar.getTime());
@@ -66,7 +66,7 @@ public class JwtTokenUtils {
     public String generateAccessTokenByUsername(String username){
         //generate access token
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.MINUTE, 30);
+        calendar.add(Calendar.MONTH, 6);
         Claims claims = Jwts.claims();
         claims.put("sub", username);
         claims.setExpiration(calendar.getTime());
@@ -83,6 +83,8 @@ public class JwtTokenUtils {
         try {
             JwtParser parser = Jwts.parserBuilder().setSigningKey(secretKey).build();
             claims = parser.parseClaimsJws(token).getBody();
+            LOGGER.info(token);
+            LOGGER.info("驗證成功");
 
         } catch (Exception e) {
             LOGGER.info("JWT格式验证失败:{}", token);

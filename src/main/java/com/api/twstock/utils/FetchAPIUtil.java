@@ -81,9 +81,28 @@ public class FetchAPIUtil {
             fetchFinmindAPI(dataset, dataId, LocalDate.now().minusDays(i).toString(), request, t);
             i++;
         }
+        return result;
+    }
+
+    public static <T> T fetchFugleAPIToGetQuote(String dataId , HttpMethod request, Class<T> t){
+        String token = "08df1566c354c548d53d28fd99820c80";
+
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
+        map.add("symbolId", dataId);
+        map.add("apiToken", token);
+
+        HttpEntity<String> httpEntity = new HttpEntity<String>(headers);
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString("https://api.fugle.tw/realtime/v0.3/intraday/quote")
+                .queryParams(map);
+        UriComponents uriComponents = builder.build().encode();
+        HttpEntity<T> responseEntity = restTemplate.exchange(uriComponents.toUri(), request, httpEntity, t);
+        T result = responseEntity.getBody();
 
         return result;
-
     }
 
 }

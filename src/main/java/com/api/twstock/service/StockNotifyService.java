@@ -3,6 +3,8 @@ package com.api.twstock.service;
 import com.api.twstock.model.entity.StockNotifyList;
 import com.api.twstock.model.jsonFormat.FinmindQuoteData;
 import com.api.twstock.model.jsonFormat.QuoteData;
+import com.api.twstock.model.jsonFormat.fugle.Data;
+import com.api.twstock.model.jsonFormat.fugle.TradeData;
 import com.api.twstock.repo.StockNameRepo;
 import com.api.twstock.repo.StockNotifyRepo;
 import com.api.twstock.utils.FetchAPIUtil;
@@ -30,8 +32,8 @@ public class StockNotifyService {
         this.stockNameRepo = stockNameRepo;
     }
 
-    public List<StockNotifyList> getAllNotifyList(){
-        return stockNotifyRepo.findAll();
+    public List<StockNotifyList> getNotifyListByLineId(String userLineId){
+        return stockNotifyRepo.findByUserLineId(userLineId);
     }
 
     public StockNotifyList addStockNotifyList(String stockId, Float targetPrice, String strategy, String comment){
@@ -64,13 +66,15 @@ public class StockNotifyService {
         for (int i = 0; i <= notifyList.size()-1; i++) {
 
             //fetch data from finmind api
-            List<QuoteData> fetchData = FetchAPIUtil.fetchFinmindAPI("TaiwanStockPriceTick",
+            /*List<QuoteData> fetchData = FetchAPIUtil.fetchFinmindAPI("TaiwanStockPriceTick",
                             notifyList.get(i).getStockId(), today, HttpMethod.GET, FinmindQuoteData.class)
                     .getData();
-            List<QuoteData> data = mapper.convertValue(fetchData, new TypeReference<List<QuoteData>>(){});
+            List<QuoteData> data = mapper.convertValue(fetchData, new TypeReference<List<QuoteData>>(){});*/
+
+            TradeData data = FetchAPIUtil.fetchFugleAPIToGetQuote(notifyList.get(i).getStockId(), HttpMethod.GET, Data.class).getQuote().getTrade().getTradeData();
 
             //get the latest quotation
-            Float lastQuote = data.get(data.size() - 1).getDealPrice();
+            Float lastQuote = data.getPrice();
 
             //get stock name
             String stockName = stockNameRepo.getStockNameByStockId(notifyList.get(i).getStockId());

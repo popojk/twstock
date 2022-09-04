@@ -2,6 +2,7 @@ package com.api.twstock.controller;
 
 import com.api.twstock.model.DTO.BasicTaDto;
 import com.api.twstock.service.StockDataService;
+import com.api.twstock.service.StockIndexService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,13 +11,19 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/stock/stats")
 @CrossOrigin(origins = "http://localhost:3000")
-public class StockDataController {
+public class TaStatsController {
 
-    @Autowired
+
     StockDataService stockDataService;
+    StockIndexService stockIndexService;
 
-    @ApiOperation(value="取得finmind API資料")
+    public TaStatsController(StockDataService stockDataService, StockIndexService stockIndexService) {
+        this.stockDataService = stockDataService;
+        this.stockIndexService = stockIndexService;
+    }
+
     @GetMapping
+    @ApiOperation(value="取得finmind API資料")
     public Object getFinmindAPIData(@RequestParam(name="dataset") String dataset,
                                     @RequestParam(name="stock_id") String stockId,
                                     @RequestParam(name="start_date") String start_date,
@@ -24,8 +31,8 @@ public class StockDataController {
            return stockDataService.getFinmindAPIData(dataset, stockId, start_date);
     }
 
-    @ApiOperation(value="依股票代號與起始日取得個股歷史股價")
     @GetMapping("/basic")
+    @ApiOperation(value="依股票代號與起始日取得個股歷史股價")
     public Object getData(@RequestParam(name="stock_id") String stockId,
                              @RequestParam(name="start_date") String startDate){
         BasicTaDto basicTaDto = new BasicTaDto();
@@ -34,17 +41,16 @@ public class StockDataController {
         return stockDataService.getBasicTaData(basicTaDto);
     }
 
-    @ApiOperation(value="依股票代號，起始日以及均線天數取得個股歷史股價及移動平均線資料")
     @GetMapping("basicwithma")
+    @ApiOperation(value="依股票代號，起始日以及均線天數取得個股歷史股價及移動平均線資料")
     public Object getBasicTaWithMA(@RequestBody BasicTaDto basicTaDto){
         return  stockDataService.getBasicTaDataWithMA(basicTaDto);
     }
 
-    @ApiOperation(value="取得前後時類股指數漲跌幅")
     @GetMapping("/indexbytype")
+    @ApiOperation(value="取得前後10類股指數漲跌幅")
     public Object getIndexByType(){
-
-        return null;
+        return stockDataService.getTopAndLastTenStockTypeIndexData();
     }
 
 }

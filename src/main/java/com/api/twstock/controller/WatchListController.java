@@ -16,21 +16,21 @@ public class WatchListController {
     @Autowired
     WatchlistService watchlistService;
 
+    @PostMapping("/test")
     @ApiOperation(value = "測試用帳戶名新增股票至觀察清單")
-    @PostMapping
     public void addStockToWatchListByUsernameAndStockId(@RequestParam(name="username") String username,
                                                         @RequestParam(name="stock_id") String stockId){
         watchlistService.addWatchlistByUsernameAndStockId(username, stockId);
     }
 
-    @ApiOperation(value="依帳號取得觀察清單")
     @GetMapping("/get")
+    @ApiOperation(value="依帳號取得觀察清單")
     public List<StockWatchlist> getWatchlistByUsername(@RequestParam(name="username") String username){
         return watchlistService.getStockWatchlistByUserName(username);
     }
 
-    @ApiOperation(value="依帳號與股票代碼刪除觀察清項目")
     @DeleteMapping("/delete")
+    @ApiOperation(value="依帳號與股票代碼刪除觀察清項目")
     public void deleteWatchlistItemByUsernameAndStockId(@RequestParam(name="username") String username,
                                                         @RequestParam(name="stockid") String stockId){
         watchlistService.deleteStockWatchlistByUsernameAndStockId(username, stockId);
