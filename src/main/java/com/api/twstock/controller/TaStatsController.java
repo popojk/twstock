@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/stock/stats")
 @CrossOrigin(origins = "http://localhost:3000")
-public class TaStatsController {
+public class StockDataController {
 
     @Autowired
     StockDataService stockDataService;
@@ -40,5 +40,11 @@ public class TaStatsController {
         return  stockDataService.getBasicTaDataWithMA(basicTaDto);
     }
 
+    @ApiOperation(value="取得前後時類股指數漲跌幅")
+    @GetMapping("/indexbytype")
+    public Object getIndexByType(){
+
+        return null;
+    }
 
 }
