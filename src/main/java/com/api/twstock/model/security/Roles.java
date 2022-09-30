@@ -23,7 +23,7 @@ public class Roles {
     private String name;
 
     @JsonBackReference
-    @ManyToMany(mappedBy = "roles")
+    @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
     private List<User> users = new ArrayList<>();
 
 }

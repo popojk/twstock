@@ -21,11 +21,7 @@ public interface LineMessageAPI {
     @PostMapping("v2/bot/message/push")
     Response push(Push push);
 
-
     @PostMapping("/company/applylistingForeign")
     Response test();
-
-
-
 
 }

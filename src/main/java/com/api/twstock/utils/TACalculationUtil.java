@@ -1,7 +1,7 @@
 package com.api.twstock.utils;
 
 import com.api.twstock.model.DTO.BasicTaDto;
-import com.api.twstock.model.jsonFormat.StockHistoryData;
+import com.api.twstock.model.jsonFormat.finmind.StockHistoryData;
 
 import java.util.ArrayList;
 import java.util.HashMap;

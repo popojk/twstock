@@ -27,14 +27,15 @@ public class WatchlistService {
         this.stockWatchlistRepo = stockWatchlistRepo;
     }
 
+    //以帳號及股票代號新增觀察清單
     public void addWatchlistByUsernameAndStockId(String username, String stockId) throws ApiException {
-        String stockName = stockNameService.getStockNameOrId(stockId).toString();
+        String stockName = stockNameService.getStockNameOrId(stockId);
         User tempUser = userService.getUserByUsername(username);
         List<StockWatchlist> currentWatchlist = tempUser.getWatchList();
 
         //check if the watchlist item already exists
-        for(int i=0; i <= currentWatchlist.size()-1; i++){
-            if(currentWatchlist.get(i).getStockId().equals(stockId)){
+        for(StockWatchlist watchlist : currentWatchlist){
+            if(watchlist.getStockId().equals(stockId)){
                 throw new ApiException("Stock ID already exists");
             } else if(currentWatchlist.size() >= 5){
                 throw new ApiException("Watchlist item cannot over 5");
@@ -46,15 +47,16 @@ public class WatchlistService {
         stockWatchlistRepo.save(stockWatchList);
     }
 
+    //以帳號及股票代號新增刪除清單
     public boolean deleteWatchlistByUsernameAndStockId(String username, String stockId) throws ApiException {
-        String stockName = stockNameService.getStockNameOrId(stockId).toString();
+        //以帳號取得觀察清單
         User tempUser = userService.getUserByUsername(username);
         List<StockWatchlist> currentWatchlist = tempUser.getWatchList();
         boolean deleted = false;
-
-        for(int i = 0 ; i<=currentWatchlist.size()-1; i++){
-            if(currentWatchlist.get(i).getStockId().equals(stockId)){
-                stockWatchlistRepo.deleteById(currentWatchlist.get(i).getId());
+        //確認股票代號是否存在清單中，如有則由資料庫刪除
+        for(StockWatchlist watchlist : currentWatchlist){
+            if(watchlist.getStockId().equals(stockId)){
+                stockWatchlistRepo.deleteById(watchlist.getId());
                 deleted = true;
             }
         }

@@ -10,7 +10,7 @@ import javax.transaction.Transactional;
 
 public interface StockNameRepo extends JpaRepository<StockName, Integer> {
 
-    @Transactional
-    @Query("select stockName.stockName from StockName stockName where stockName.stockId = :stockId")
-    String getStockNameByStockId(@Param("stockId") String stockId);
+    StockName getStockNameByStockId(String stockId);
+
+    StockName getStockStockIdByStockName(String stockName);
 }

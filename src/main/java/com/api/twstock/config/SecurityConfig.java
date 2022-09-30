@@ -46,7 +46,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new JwtAuthenticationTokenFilter();
     }
 
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
@@ -56,7 +55,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/auth/*").permitAll()
                 .antMatchers("/notify").permitAll()
-                .antMatchers("/test/quote").permitAll()
+                .antMatchers("/test").permitAll()
+                .antMatchers("/stock/stats/*").permitAll()
+                .antMatchers("/stock/stats").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(jwtAuthenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class)
@@ -79,8 +80,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         source.registerCorsConfiguration("/**", config);
         return new org.springframework.web.filter.CorsFilter(source);
     }
-
-
 
     @Bean
     @Override

@@ -24,19 +24,19 @@ import java.util.Date;
 @Slf4j
 public class JwtUserDetailsServiceImpl implements UserDetailsService {
 
-    @Autowired
     UserRepo userRepo;
-
-    @Autowired
     RoleRepo roleRepo;
-
-    @Autowired
     BCryptPasswordEncoder passwordEncoder;
+
+    public JwtUserDetailsServiceImpl(UserRepo userRepo, RoleRepo roleRepo, BCryptPasswordEncoder passwordEncoder) {
+        this.userRepo = userRepo;
+        this.roleRepo = roleRepo;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepo.findByUsername(username);
-
         if(user==null){
             throw new UsernameNotFoundException(String.format("No user found with username ''%s", username));
         } else {
@@ -62,16 +62,22 @@ public class JwtUserDetailsServiceImpl implements UserDetailsService {
         return tempUser;
     }
 
+    //將line id綁定帳號
     public Boolean addUserLineIdToAccount(String username, String userLineId) throws UsernameNotFoundException{
             //find user from user repo
             User tempUser = userRepo.findByUsername(username);
             if(tempUser == null){
                 throw new UsernameNotFoundException("username do not exist");
             }
-            //add user line id to account
-            tempUser.setUserLineId(userLineId);
-            userRepo.save(tempUser);
-            return true;
+            //check if userlineid already exists
+            if(tempUser.getUserLineId() != null){
+                return false;
+            } else {
+                //add user line id to account
+                tempUser.setUserLineId(userLineId);
+                userRepo.save(tempUser);
+                return true;
+            }
     }
 
 }

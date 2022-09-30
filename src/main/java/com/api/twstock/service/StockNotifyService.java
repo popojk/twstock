@@ -1,19 +1,14 @@
 package com.api.twstock.service;
 
 import com.api.twstock.model.entity.StockNotifyList;
-import com.api.twstock.model.jsonFormat.FinmindQuoteData;
-import com.api.twstock.model.jsonFormat.QuoteData;
 import com.api.twstock.model.jsonFormat.fugle.Data;
 import com.api.twstock.model.jsonFormat.fugle.TradeData;
 import com.api.twstock.repo.StockNameRepo;
 import com.api.twstock.repo.StockNotifyRepo;
 import com.api.twstock.utils.FetchAPIUtil;
 import com.api.twstock.utils.StockPriceUtil;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -71,13 +66,13 @@ public class StockNotifyService {
                     .getData();
             List<QuoteData> data = mapper.convertValue(fetchData, new TypeReference<List<QuoteData>>(){});*/
 
-            TradeData data = FetchAPIUtil.fetchFugleAPIToGetQuote(notifyList.get(i).getStockId(), HttpMethod.GET, Data.class).getQuote().getTrade().getTradeData();
+            TradeData data = FetchAPIUtil.fetchFugleAPIToGetQuote(notifyList.get(i).getStockId(), HttpMethod.GET, Data.class, "quote").getQuote().getTrade().getTradeData();
 
             //get the latest quotation
             Float lastQuote = data.getPrice();
 
             //get stock name
-            String stockName = stockNameRepo.getStockNameByStockId(notifyList.get(i).getStockId());
+            String stockName = stockNameRepo.getStockNameByStockId(notifyList.get(i).getStockId()).getStockName();
 
             //send line notify while hit target price
             if (notifyList.get(i).getStrat().equals("breakThrough")) {

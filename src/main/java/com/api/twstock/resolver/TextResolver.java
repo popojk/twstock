@@ -35,8 +35,6 @@ public class TextResolver implements Resolver {
         //need to check source (user / room / group)
         //to do
         String userId = event.map(e -> e.getSource().getUserId()).orElse(null);
-        log.info("replyToken = {}", replyToken);
-        log.info("message = {}", message);
 
         if(replyToken == null || message == null){
             log.error("replyToken or message is null");

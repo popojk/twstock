@@ -30,7 +30,7 @@ public class WatchListController {
     }
 
     @DeleteMapping("/delete")
-    @ApiOperation(value="依帳號與股票代碼刪除觀察清項目")
+    @ApiOperation(value="以帳號與股票代碼刪除觀察清單項目")
     public void deleteWatchlistItemByUsernameAndStockId(@RequestParam(name="username") String username,
                                                         @RequestParam(name="stockid") String stockId){
         watchlistService.deleteStockWatchlistByUsernameAndStockId(username, stockId);

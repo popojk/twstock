@@ -1,8 +1,8 @@
 package com.api.twstock.service;
 
-import com.api.twstock.model.lineEntity.EntityMessage;
-import com.api.twstock.model.lineEntity.Push;
-import com.api.twstock.model.lineEntity.TextMessage;
+import com.api.twstock.handlers.EventHandler;
+import com.api.twstock.handlers.MessageHandler;
+import com.api.twstock.model.lineEntity.*;
 import com.api.twstock.utils.FetchAPIUtil;
 import com.api.twstock.utils.LineMessageAPI;
 import feign.Response;
@@ -11,19 +11,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 public class LineNotifyService {
 
-    @Autowired
     LineMessageAPI lineMessageAPI;
 
-    public String sendNoticeToAlex(String message){
-        return FetchAPIUtil.fetchLineNotify("https://notify-api.line.me/api/notify",
-                 message);
+    public LineNotifyService(LineMessageAPI lineMessageAPI) {
+        this.lineMessageAPI = lineMessageAPI;
     }
 
     public void pushNoticeMessageToLineUserId(String message, String userLineId){

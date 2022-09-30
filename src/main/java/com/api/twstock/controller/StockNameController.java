@@ -1,9 +1,10 @@
 package com.api.twstock.controller;
 
-import com.api.twstock.model.jsonFormat.StockNameData;
+import com.api.twstock.model.jsonFormat.finmind.StockNameData;
 import com.api.twstock.service.StockNameService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,6 +27,7 @@ public class StockNameController {
 
     @GetMapping("/getname")
     @ApiOperation(value="以股票代號取得股票名稱")
+    @Cacheable(value="stockName", key="#stockId")
     public Object getStockNameById(@RequestParam(name="stockid") String stockId){
         if(stockNameService.getStockNameOrId(stockId) != null){
             return stockNameService.getStockNameOrId(stockId);
@@ -35,6 +37,7 @@ public class StockNameController {
 
     @GetMapping("/getid")
     @ApiOperation(value="以股票名稱取得股票代號")
+    @Cacheable(value="stockId", key="#stockName")
     public Object getStockIdByName(@RequestParam(name="stockname") String stockName){
         if(stockNameService.getStockNameOrId(stockName) != null){
             return stockNameService.getStockNameOrId(stockName);

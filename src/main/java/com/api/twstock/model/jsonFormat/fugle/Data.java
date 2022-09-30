@@ -10,9 +10,6 @@ import java.util.*;
 @Setter
 public class Data<T> {
 
-    @JsonProperty(value="apiVersion")
-    String apiVersion;
-
     @JsonProperty(value="data")
     Quote quote;
 }

@@ -1,4 +1,4 @@
-package com.api.twstock.model.jsonFormat;
+package com.api.twstock.model.jsonFormat.finmind;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;

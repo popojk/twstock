@@ -1,12 +1,12 @@
 package com.api.twstock.service;
 
 import com.api.twstock.model.DTO.BasicTaDto;
-import com.api.twstock.model.jsonFormat.FinmindQuoteData;
-import com.api.twstock.model.jsonFormat.QuoteData;
-import com.api.twstock.model.jsonFormat.StockHistoryData;
+import com.api.twstock.model.jsonFormat.finmind.FinmindData;
+import com.api.twstock.model.jsonFormat.finmind.QuoteData;
+import com.api.twstock.model.jsonFormat.finmind.StockHistoryData;
 import com.api.twstock.model.jsonFormat.fugle.Data;
 import com.api.twstock.model.jsonFormat.fugle.TopAndLastTenObject;
-import com.api.twstock.model.util.MAData;
+import com.api.twstock.model.jsonFormat.fugle.chartData.ChartData;
 import com.api.twstock.utils.FetchAPIUtil;
 import com.api.twstock.utils.TACalculationUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -17,10 +17,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.MalformedParameterizedTypeException;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -34,12 +32,13 @@ public class StockDataService {
         this.stockIndexService = stockIndexService;
     }
 
+    //取得當前股價
     public QuoteData getLatestQuotationDataByTicker(String ticker){
         ObjectMapper mapper = new ObjectMapper();
         LocalDate today = LocalDate.now();
         List<QuoteData> data =
             FetchAPIUtil.fetchFinmindAPI("TaiwanStockPriceTick",
-                            ticker, "2022-06-13", HttpMethod.GET, FinmindQuoteData.class)
+                            ticker, today.toString(), HttpMethod.GET, FinmindData.class)
                     .getData();
         List<QuoteData> list = mapper.convertValue(data, new TypeReference<List<QuoteData>>(){});
 
@@ -49,10 +48,10 @@ public class StockDataService {
         return lastQuote;
     }
 
-    //fetch finmind API data
+    //取得finmind API資料
     public Object getFinmindAPIData(String dataset, String stockId, String startDate){
         return FetchAPIUtil.fetchFinmindAPI(dataset,
-               stockId, startDate, HttpMethod.GET, FinmindQuoteData.class);
+               stockId, startDate, HttpMethod.GET, FinmindData.class);
     }
 
     //取得技術分析資料
@@ -63,9 +62,8 @@ public class StockDataService {
                 basicTaDto.getStockNo(),
                 basicTaDto.getStartDate(),
                 HttpMethod.GET,
-                FinmindQuoteData.class).getData();
+                FinmindData.class).getData();
         List<StockHistoryData> list = mapper.convertValue(basicData, new TypeReference<List<StockHistoryData>>(){});
-        logger.info("data fetch success");
         return list;
     }
 
@@ -87,7 +85,7 @@ public class StockDataService {
         //loop over stock index and insert data in allIndexMap
         for(int i = 10 ; i <= 41 ; i++){
             Data fetchData = FetchAPIUtil.fetchFugleAPIToGetQuote("IX00"+i,
-                    HttpMethod.GET, Data.class);
+                    HttpMethod.GET, Data.class, "quote");
             String indexName = stockIndexService.getIndexNameById("IX00"+i);
             allIndexMap.put(indexName,
                     fetchData.getQuote().getTrade().getChangePercent());
@@ -104,6 +102,11 @@ public class StockDataService {
         TopAndLastTenObject returnObject = new TopAndLastTenObject(topTenList, lastTenList);
          //return result
         return returnObject;
+    }
+
+    //取得指數/個股日線圖資料
+    public Object getDayTradeData(String index){
+        return FetchAPIUtil.fetchFugleAPIToGetQuote(index, HttpMethod.GET, ChartData.class, "chart");
     }
 
 

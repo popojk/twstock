@@ -5,7 +5,6 @@ import com.api.twstock.handlers.MessageHandler;
 import com.api.twstock.model.DTO.TradeNotifyDTO;
 import com.api.twstock.model.DTO.UpdateStockNotifyDto;
 import com.api.twstock.model.entity.StockNotifyList;
-import com.api.twstock.model.jsonFormat.FinmindQuoteData;
 import com.api.twstock.model.lineEntity.Event;
 import com.api.twstock.model.lineEntity.EventWrapper;
 import com.api.twstock.service.LineNotifyService;
@@ -13,10 +12,10 @@ import com.api.twstock.service.ReplyService;
 import com.api.twstock.service.StockNotifyService;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.TaskScheduler;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -31,20 +30,18 @@ import java.util.stream.Collectors;
 @Slf4j
 public class NoticeController {
 
-    private final HashMap<String, EventHandler> handlers;
-
     LineNotifyService lineNotifyService;
     StockNotifyService stockNotifyService;
     TaskScheduler taskScheduler;
     ReplyService replyService;
+    private final HashMap<String, EventHandler> handlers;
 
     public NoticeController(LineNotifyService lineNotifyService, StockNotifyService stockNotifyService,
-                            TaskScheduler taskScheduler, MessageHandler messageHandler, ReplyService replyService){
+                            TaskScheduler taskScheduler, MessageHandler messageHandler,ReplyService replyService){
         this.lineNotifyService = lineNotifyService;
         this.stockNotifyService = stockNotifyService;
         this.taskScheduler = taskScheduler;
         this.replyService = replyService;
-
         handlers = new HashMap<>() {{
             put("message", messageHandler);
         }};
@@ -62,7 +59,6 @@ public class NoticeController {
     public ResponseEntity<Object> receiveMessage(@RequestBody EventWrapper eventWrapper){
         // filter : 篩出所有是 *訊息* |而且| 是 *文字* 的訊息
         // collect : 將其加入Map中 為 <replyToken, Event>
-        log.info("receive request");
         Map<String, Object> data = eventWrapper.getEvents().stream().collect(Collectors.toMap(Event::getReplyToken, x -> x));
         Optional<Event> event;
 
@@ -74,12 +70,12 @@ public class NoticeController {
                 handlers.get(eventType).handle(event);
             }
         }
-        return ResponseEntity.ok().body("123");
+        return ResponseEntity.ok().body("Response success");
     }
 
     @PostMapping("/frontend")
     @ResponseBody
-    @ApiOperation(value="從前端網站新增到價通知")
+    @ApiOperation(value="從台股小幫手網站新增到價通知")
     public ResponseEntity<Object> addNotifyListFromFrontend(@RequestBody TradeNotifyDTO tradeNotifyDTO){
         if(stockNotifyService.addStockNotifyList(tradeNotifyDTO.getStockId(), tradeNotifyDTO.getTargetPrice(),
                 tradeNotifyDTO.getTradingStrat(), tradeNotifyDTO.getMessage(), tradeNotifyDTO.getUserLineId()) != null
@@ -97,11 +93,11 @@ public class NoticeController {
     @PostMapping("/hitprice")
     @ApiOperation(value="新增到價通知")
     public StockNotifyList addNotifyList(@RequestBody TradeNotifyDTO tradeNotifyDTO){
-        StockNotifyList stockNotifyList = stockNotifyService.addStockNotifyList(tradeNotifyDTO.getStockId(),
+        log.info("get via db");
+        return stockNotifyService.addStockNotifyList(tradeNotifyDTO.getStockId(),
                 tradeNotifyDTO.getTargetPrice(),
                 tradeNotifyDTO.getTradingStrat(),
                 tradeNotifyDTO.getMessage());
-        return stockNotifyList;
     }
 
     @PutMapping("update")
@@ -118,6 +114,7 @@ public class NoticeController {
         stockNotifyService.deleteStockNotifyList(id);
     }
 
+    //僅為測試用
     @GetMapping("/test")
     public void replyTest(){
         replyService.replyTest();

@@ -84,7 +84,7 @@ public class FetchAPIUtil {
         return result;
     }
 
-    public static <T> T fetchFugleAPIToGetQuote(String dataId , HttpMethod request, Class<T> t){
+    public static <T> T fetchFugleAPIToGetQuote(String dataId , HttpMethod request, Class<T> t, String fetchDataType){
         String token = "08df1566c354c548d53d28fd99820c80";
 
         RestTemplate restTemplate = new RestTemplate();
@@ -96,7 +96,7 @@ public class FetchAPIUtil {
         map.add("apiToken", token);
 
         HttpEntity<String> httpEntity = new HttpEntity<String>(headers);
-        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString("https://api.fugle.tw/realtime/v0.3/intraday/quote")
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString("https://api.fugle.tw/realtime/v0.3/intraday/"+fetchDataType)
                 .queryParams(map);
         UriComponents uriComponents = builder.build().encode();
         HttpEntity<T> responseEntity = restTemplate.exchange(uriComponents.toUri(), request, httpEntity, t);
