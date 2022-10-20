@@ -39,10 +39,11 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
-
+        //取得請求頭
         String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
         if(authHeader != null) {
+            //取得JWT並解析出帳號
             String accessToken = authHeader.replace("Bearer ", "");
             String username = jwtTokenUtils.getUserNameFromToken(accessToken);
 
@@ -52,8 +53,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
-}
-
+        }
         filterChain.doFilter(request, response);
     }
 }

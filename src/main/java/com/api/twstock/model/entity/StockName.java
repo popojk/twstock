@@ -6,7 +6,10 @@ import lombok.Data;
 import javax.persistence.*;
 
 @Entity
-@Table(name="stock_name")
+@Table(name="stock_name",
+       indexes={@Index(name="stock_id_index", columnList="stock_id"),
+                @Index(name="stock_name_index", columnList="stock_name")
+       })
 @Data
 @AllArgsConstructor
 public class StockName {

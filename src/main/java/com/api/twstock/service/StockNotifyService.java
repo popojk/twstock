@@ -9,6 +9,7 @@ import com.api.twstock.utils.FetchAPIUtil;
 import com.api.twstock.utils.StockPriceUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpMethod;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -52,40 +53,42 @@ public class StockNotifyService {
     }
 
     //send notice when stock price hit target price
-    //@Scheduled(fixedRate = 5000)
+    @Scheduled(fixedRate = 20000)
     public void hitPriceNotice() {
         ObjectMapper mapper = new ObjectMapper();
         //get stock notify list from db
         List<StockNotifyList> notifyList = stockNotifyRepo.findAll();
         String today = LocalDate.now().toString();
-        for (int i = 0; i <= notifyList.size()-1; i++) {
+        if(!notifyList.isEmpty()) {
+            for (int i = 0; i <= notifyList.size() - 1; i++) {
 
-            //fetch data from finmind api
+                //fetch data from finmind api
             /*List<QuoteData> fetchData = FetchAPIUtil.fetchFinmindAPI("TaiwanStockPriceTick",
                             notifyList.get(i).getStockId(), today, HttpMethod.GET, FinmindQuoteData.class)
                     .getData();
             List<QuoteData> data = mapper.convertValue(fetchData, new TypeReference<List<QuoteData>>(){});*/
 
-            TradeData data = FetchAPIUtil.fetchFugleAPIToGetQuote(notifyList.get(i).getStockId(), HttpMethod.GET, Data.class, "quote").getQuote().getTrade().getTradeData();
+                TradeData data = FetchAPIUtil.fetchFugleAPIToGetQuote(notifyList.get(i).getStockId(), HttpMethod.GET, Data.class, "quote").getQuote().getTrade().getTradeData();
 
-            //get the latest quotation
-            Float lastQuote = data.getPrice();
+                //get the latest quotation
+                Float lastQuote = data.getPrice();
 
-            //get stock name
-            String stockName = stockNameRepo.getStockNameByStockId(notifyList.get(i).getStockId()).getStockName();
+                //get stock name
+                String stockName = stockNameRepo.getStockNameByStockId(notifyList.get(i).getStockId()).getStockName();
 
-            //send line notify while hit target price
-            if (notifyList.get(i).getStrat().equals("breakThrough")) {
-                if (StockPriceUtil.breakThrough(notifyList.get(i).getTargetPrice(), lastQuote)) {
-                    lineNotifyService.pushNoticeMessageToLineUserId(stockName+"(" + notifyList.get(i).getStockId() + ")" + "目前股價" + lastQuote + "，股價已突破"
-                            + notifyList.get(i).getTargetPrice() + "，" + notifyList.get(i).getComment(), notifyList.get(i).getUserLineId());
-                    stockNotifyRepo.deleteById(notifyList.get(i).getId());
-                }
-            } else if (notifyList.get(i).getStrat().equals("tradingStop")) {
-                if (StockPriceUtil.tradingStop(notifyList.get(i).getTargetPrice(), lastQuote)) {
-                    lineNotifyService.pushNoticeMessageToLineUserId(stockName+"(" + notifyList.get(i).getStockId() + ")" + "目前股價" + lastQuote + "，股價已跌破"
-                            + notifyList.get(i).getTargetPrice() + "，" + notifyList.get(i).getComment(), notifyList.get(i).getUserLineId());
-                    stockNotifyRepo.deleteById(notifyList.get(i).getId());
+                //send line notify while hit target price
+                if (notifyList.get(i).getStrat().equals("breakThrough")) {
+                    if (StockPriceUtil.breakThrough(notifyList.get(i).getTargetPrice(), lastQuote)) {
+                        lineNotifyService.pushNoticeMessageToLineUserId(stockName + "(" + notifyList.get(i).getStockId() + ")" + "目前股價" + lastQuote + "，股價已突破"
+                                + notifyList.get(i).getTargetPrice() + "，" + notifyList.get(i).getComment(), notifyList.get(i).getUserLineId());
+                        stockNotifyRepo.deleteById(notifyList.get(i).getId());
+                    }
+                } else if (notifyList.get(i).getStrat().equals("tradingStop")) {
+                    if (StockPriceUtil.tradingStop(notifyList.get(i).getTargetPrice(), lastQuote)) {
+                        lineNotifyService.pushNoticeMessageToLineUserId(stockName + "(" + notifyList.get(i).getStockId() + ")" + "目前股價" + lastQuote + "，股價已跌破"
+                                + notifyList.get(i).getTargetPrice() + "，" + notifyList.get(i).getComment(), notifyList.get(i).getUserLineId());
+                        stockNotifyRepo.deleteById(notifyList.get(i).getId());
+                    }
                 }
             }
         }

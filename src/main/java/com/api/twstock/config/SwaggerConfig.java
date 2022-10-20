@@ -28,8 +28,8 @@ public class SwaggerConfig {
 
     private ApiInfo apiInfo(){
         return new ApiInfoBuilder()
-                .title("Investment Dashboard Documentation")
-                .description("Investment Dashboard api info")
+                .title("TW Stock Documentation")
+                .description("TW Stock api info")
                 .version("0.0")
                 .build();
     }

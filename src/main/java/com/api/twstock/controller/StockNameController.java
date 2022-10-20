@@ -27,7 +27,8 @@ public class StockNameController {
 
     @GetMapping("/getname")
     @ApiOperation(value="以股票代號取得股票名稱")
-    @Cacheable(value="stockName", key="#stockId")
+    @Cacheable(value="stockName", key="#stockId",
+    condition="@stockNameService.getStockNameOrId(#stockId) != null")
     public Object getStockNameById(@RequestParam(name="stockid") String stockId){
         if(stockNameService.getStockNameOrId(stockId) != null){
             return stockNameService.getStockNameOrId(stockId);
@@ -37,7 +38,8 @@ public class StockNameController {
 
     @GetMapping("/getid")
     @ApiOperation(value="以股票名稱取得股票代號")
-    @Cacheable(value="stockId", key="#stockName")
+    @Cacheable(value="stockId", key="#stockName",
+    condition = "@stockNameService.getStockNameOrId(#stockName) != null")
     public Object getStockIdByName(@RequestParam(name="stockname") String stockName){
         if(stockNameService.getStockNameOrId(stockName) != null){
             return stockNameService.getStockNameOrId(stockName);

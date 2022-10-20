@@ -106,7 +106,7 @@ public class JwtTokenUtils {
     }
 
     //確認token效期
-    public String verifyExpriation(String refreshToken) throws ApiException {
+    public String verifyExpiration(String refreshToken) throws ApiException {
          Claims claims = getClaimsFromToken(refreshToken);
          Date expriation = claims.getExpiration();
          if(expriation.before(new Date(System.currentTimeMillis()))){

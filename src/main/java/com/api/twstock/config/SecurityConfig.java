@@ -24,7 +24,6 @@ import org.springframework.web.filter.CorsFilter;
 import java.util.Arrays;
 import java.util.List;
 
-@Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -48,7 +47,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-
         http
                 .cors().and()
                 .csrf().disable()
@@ -56,8 +54,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/auth/*").permitAll()
                 .antMatchers("/notify").permitAll()
                 .antMatchers("/test").permitAll()
-                .antMatchers("/stock/stats/*").permitAll()
-                .antMatchers("/stock/stats").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(jwtAuthenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class)
@@ -65,14 +61,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 
+    //允許Cors請求
     @Bean
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
-        //允许所有域名进行跨域调用
+        //允许所有域名進行跨域调用
         config.addAllowedOriginPattern("*");
-        //允许跨越发送cookie
+        //允许跨域發送cookie
         config.setAllowCredentials(true);
-        //放行全部原始头信息
+        //放行全部原始頭信息
         config.addAllowedHeader("*");
         //允许所有请求方法跨域调用
         config.addAllowedMethod("*");
