@@ -7,6 +7,14 @@ services:
     external_links:
       - tw-stock-db:tw-stock-db
       - tw-stock-redis:tw-stock-redis
+    deploy:
+      resources:
+        reservations:
+          cpus: '0.5'
+          memory: 0.5G
+        limits:
+          cpus: '1'
+          memory: 0.8G
 
   tw-stock-db:
     image: popojk/tw-stock-db:latest
@@ -16,22 +24,57 @@ services:
       MYSQL_USER: root
       MYSQL_PASSWORD: Ss6450065
     ports:
-      - 3307:3306
+      - 3306:3306
+    networks:
+      - twstock-network
     external_links:
       - tw-stock-app:tw-stock-app
+    deploy:
+      resources:
+        reservations:
+          cpus: '0.5'
+          memory: 0.5G
+        limits:
+          cpus: '0.5'
+          memory: 0.5G
 
   tw-stock-redis:
     image: popojk/tw-stock-redis:latest
     container_name: tw-stock-redis
     ports:
       - 6379:6379
+    networks:
+      - twstock-network
     external_links:
       - tw-stock-app:tw-stock-app
+    deploy:
+      resources:
+        reservations:
+          cpus: '0.5'
+          memory: 0.5G
+        limits:
+          cpus: '0.5'
+          memory: 0.5G
 
-  tw-stock-frontend:
-    image: popojk/tw-stock-frontend
-    container_name: tw-stock-frontend
+  tw-stock-proxy:
+    image: popojk/tw-stock-proxy:latest
+    domainname: "twstock"
+    container_name: tw-stock-proxy
     ports:
       - 80:80
+    networks:
+      - twstock-network
     external_links:
       - tw-stock-app:tw-stock-app
+    deploy:
+      resources:
+        reservations:
+          cpus: '0.5'
+          memory: 0.5G
+        limits:
+          cpus: '0.5'
+          memory: 0.5G
+
+networks:
+  twstock-network:
+    driver: bridge

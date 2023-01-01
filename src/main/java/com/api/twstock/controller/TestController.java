@@ -5,6 +5,8 @@ import com.api.twstock.utils.FetchAPIUtil;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+
 @RestController
 @RequestMapping("/test")
 @CrossOrigin(origins = "http://localhost:3000")
