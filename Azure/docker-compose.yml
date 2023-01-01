@@ -1,0 +1,37 @@
+services:
+  tw-stock-app:
+    image: popojk/tw-stock-app:latest
+    container_name: tw-stock-app
+    ports:
+      - 8080:8080
+    external_links:
+      - tw-stock-db:tw-stock-db
+      - tw-stock-redis:tw-stock-redis
+
+  tw-stock-db:
+    image: popojk/tw-stock-db:latest
+    container_name: tw-stock-db
+    environment:
+      MYSQL_DATABASE: tw_stock-db
+      MYSQL_USER: root
+      MYSQL_PASSWORD: Ss6450065
+    ports:
+      - 3307:3306
+    external_links:
+      - tw-stock-app:tw-stock-app
+
+  tw-stock-redis:
+    image: popojk/tw-stock-redis:latest
+    container_name: tw-stock-redis
+    ports:
+      - 6379:6379
+    external_links:
+      - tw-stock-app:tw-stock-app
+
+  tw-stock-frontend:
+    image: popojk/tw-stock-frontend
+    container_name: tw-stock-frontend
+    ports:
+      - 80:80
+    external_links:
+      - tw-stock-app:tw-stock-app
