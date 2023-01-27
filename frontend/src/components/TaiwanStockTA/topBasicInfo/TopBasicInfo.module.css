@@ -1,0 +1,100 @@
+.price_container{
+    margin-top: 10px;
+    margin-left:3px;
+    height: 65px;
+    display:flex;
+    flex-wrap: wrap;
+    width: 60%;
+}
+
+.quate_info{
+    height: 65px;
+    background-color: #E9E8E8;
+    border-top-style: solid;
+    border-top-color:#797575;
+    border-right: 0.1px solid #797575;
+    width: auto;
+    margin-left: 20px;
+}
+
+.lasty_detail{
+    list-style:none;
+    border-top-style: solid;
+    border-top-color:#797575;
+    margin-top: 0;
+    width: 60%;
+    height: 65px;
+    display: inline-flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-content: flex-start  space-around;
+}
+
+.lasty_detail_item{
+   margin-top: 3px;
+   width: 200px;
+   display: inline-flex;
+   align-content: flex-start  space-around;
+}
+
+.lasty_detail_item_number{
+   margin-left: 15px;
+   margin-top: 2px;
+}
+
+
+.frame {
+    margin: 0.5rem 0;
+    padding-left: 24px;
+    text-align: left;
+  }
+  
+  .stock_name {
+    font-size: 15px;
+    width: 100px;
+    height: 0.2px;
+  }
+  
+  .lastClose {
+    display: flex;
+    padding-top: 3px;
+    height: 0.5px;
+  }
+
+  .price {
+    margin-top: 18px;
+    font-size: 1.8rem;
+    margin-right: 10px;
+    height: 43px;
+    line-height: 43px;
+  }
+  
+  .spread_value {
+    font-size: 1.2rem;
+    height: 43px;
+    line-height: 43px;
+    margin-right: 12px;
+    vertical-align: middle;
+    margin-top: 20px;
+  }
+  
+  .spread_percent {
+    font-size: 1.2rem;
+    height: 43px;
+    line-height: 43px;
+    vertical-align: middle;
+    margin-top: 20px;
+  }
+
+  .red_text {
+    color: #B40021;
+  }
+  
+  .green_text {
+    color: #009900;
+  }
+  
+  .loading_icon {
+    margin: 0 auto;
+    margin-top: 15rem;
+  }

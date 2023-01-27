@@ -1,0 +1,48 @@
+.frame {
+    margin: 0.5rem 0;
+    padding-left: 24px;
+    text-align: left;
+  }
+  
+  .stock_name {
+    font-size: 2.5rem;
+  }
+  
+  .lastClose {
+    display: flex;
+  }
+  
+  .price {
+    font-size: 1.8rem;
+    margin-right: 10px;
+    height: 43px;
+    line-height: 43px;
+  }
+  
+  .spread_value {
+    font-size: 1.2rem;
+    height: 43px;
+    line-height: 43px;
+    margin-right: 12px;
+    vertical-align: middle;
+  }
+  
+  .spread_percent {
+    font-size: 1.2rem;
+    height: 43px;
+    line-height: 43px;
+    vertical-align: middle;
+  }
+  
+  .red_text {
+    color: #B40021;
+  }
+  
+  .green_text {
+    color: #009900;
+  }
+  
+  .loading_icon {
+    margin: 0 auto;
+    margin-top: 15rem;
+  }
