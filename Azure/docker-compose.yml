@@ -16,6 +16,25 @@ services:
           cpus: '1'
           memory: 0.8G
 
+  tw-stock-frontend:
+    image: popojk/tw-stock-frontend:latest
+    restart: unless-stopped
+    container_name: tw-stock-frontend
+    domainname: twstock
+    ports:
+      - 80:80
+      - 443:443
+    external_links:
+      - tw-stock-app
+    deploy:
+      resources:
+        reservations:
+          cpus: '0.5'
+          memory: 0.5G
+        limits:
+          cpus: '1'
+          memory: 0.8G
+
   tw-stock-db:
     image: popojk/tw-stock-db:latest
     container_name: tw-stock-db
@@ -43,25 +62,6 @@ services:
     container_name: tw-stock-redis
     ports:
       - 6379:6379
-    networks:
-      - twstock-network
-    external_links:
-      - tw-stock-app:tw-stock-app
-    deploy:
-      resources:
-        reservations:
-          cpus: '0.5'
-          memory: 0.5G
-        limits:
-          cpus: '0.5'
-          memory: 0.5G
-
-  tw-stock-proxy:
-    image: popojk/tw-stock-proxy:latest
-    domainname: "twstock"
-    container_name: tw-stock-proxy
-    ports:
-      - 80:80
     networks:
       - twstock-network
     external_links:

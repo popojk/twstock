@@ -1,0 +1,22 @@
+{
+	"apps": {
+		"http": {
+			"servers": {
+				"hello": {
+					"listen": [":443"],
+					"routes": [
+						{
+							"match": [{
+								"host": ["twstock.japaneast.azurecontainer.io"]
+							}],
+							"handle": [{
+								"handler": "static_response",
+								"body": "Hello, privacy!"
+							}]
+						}
+					]
+				}
+			}
+		}
+	}
+}

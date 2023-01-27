@@ -1,0 +1,3 @@
+twstock.japaneast.azurecontainer.io {
+       reverse_proxy /api/* tw-stock-app:8080
+}
