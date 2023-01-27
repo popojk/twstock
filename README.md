@@ -11,10 +11,10 @@ line官方帳號設定到價通知、設定個股觀察清單、查詢個股即�
 傳送相關通知．
 
 ##專案網址
-- 項目網址:
-- github clone:
-- 試用帳號:
-- 試用密碼:
+- 項目網址: <https://twstock.japaneast.azurecontainer.io>
+- github clone: <https://github.com/popojk/twstock.git>
+- 試用帳號: alex
+- 試用密碼: 456
 
 ##項目功能介紹
 登入畫面
